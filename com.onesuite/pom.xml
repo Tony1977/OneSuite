@@ -29,4 +29,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <modules>
+  	<module>API</module>
+  </modules>
 </project>
