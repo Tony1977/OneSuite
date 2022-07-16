@@ -19,4 +19,7 @@
 	
 	
 	
+	<modules>
+		<module>API</module>
+	</modules>
 </project>

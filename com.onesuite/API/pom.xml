@@ -78,5 +78,6 @@
 
   <modules>
   	<module>UserManagement</module>
+  	<module>Notification</module>
   </modules>
 </project>
