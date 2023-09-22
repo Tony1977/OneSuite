@@ -71,7 +71,7 @@ services:
     ports:
       - "8090:8090"
     networks:
-      - eazybank
+      - onesuite
     depends_on:
       - configserver
       - eurekaserver
@@ -115,7 +115,7 @@ services:
     ports:
       - "8072:8072"
     networks:
-      - eazybank
+      - onesuite
     depends_on:
       - configserver
       - eurekaserver
@@ -135,4 +135,4 @@ services:
       SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
 
 networks:
-  eazybank:
+  onesuite:

@@ -9,9 +9,9 @@ services:
       - "9411:9411"
     networks:
      - onesuite
-
+  
   configserver:
-    image: onesuite/configserver:latest
+    image:  ./service/configserver
     mem_limit: 700m
     ports:
       - "8071:8071"
@@ -22,9 +22,9 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: dev
       SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-      
+          
   eurekaserver:
-    image: onesuite/eurekaserver:latest
+    image: ./service/configserver
     mem_limit: 700m
     ports:
       - "8070:8070"
@@ -39,56 +39,31 @@ services:
         max_attempts: 3
         window: 120s
     environment:
-      SPRING_PROFILES_ACTIVE: dev
+      SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
       SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-
+      
   usermanagement:
-    image: onesuite/usermanagement:latest
+    build:  ./usermanagement
     mem_limit: 700m
     ports:
-      - "8080:8080"
-    networks:
-      - onesuite
+      - "8880:8880"
     depends_on:
       - configserver
       - eurekaserver
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 30s
-        max_attempts: 3
-        window: 120s
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
-      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
-      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-  
-  Notification:
-    image: onesuite/notification:latest
+      
+  notification:
+    build:  ./notification
     mem_limit: 700m
     ports:
-      - "8090:8090"
-    networks:
-      - onesuite
+      - "8881:8881"
     depends_on:
       - configserver
       - eurekaserver
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 30s
-        max_attempts: 3
-        window: 120s
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
-      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
-    
-        
+   
+       
   gatewayserver:
-    image: onesuite/gatewayserver:latest
+    image: ./service/configserver
     mem_limit: 700m
     ports:
       - "8072:8072"
@@ -97,9 +72,8 @@ services:
     depends_on:
       - configserver
       - eurekaserver
+      - notification
       - usermanagement
-      - Notification
-      
     deploy:
       restart_policy:
         condition: on-failure
@@ -107,7 +81,7 @@ services:
         max_attempts: 3
         window: 180s
     environment:
-      SPRING_PROFILES_ACTIVE: dev
+      SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
       SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
